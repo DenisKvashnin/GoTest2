@@ -1,10 +1,10 @@
 package main
 
 import (
-	orderProvider "TestTask/internal/app/providers/order"
-	orderRepo "TestTask/internal/app/repositories/order"
-	"TestTask/internal/app/services/order"
-	_ "github.com/lib/pq"
+	OrderProvider "TestTask/internal/app/providers/order"
+	Database "TestTask/internal/app/repositories/base"
+	OrderRepository "TestTask/internal/app/repositories/order"
+	OrderService "TestTask/internal/app/services/order"
 	"log"
 	"time"
 )
@@ -19,19 +19,27 @@ func main() {
 		dbName   = "myDb"
 		url      = "http://localhost:8081/"
 	)
-	orderRepository := orderRepo.New(host, port, user, password, dbName)
-	orderRepository.InitDb()
 
-	orderService := order.New(orderRepository, orderProvider.New(url))
+	database := Database.New(host, port, user, password, dbName)
+	defer func() {
+		err := database.CloseDb()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
-	for {
+	orderProvider := OrderProvider.New(url)
+	orderRepository := OrderRepository.New(database)
+	orderService := OrderService.New(orderRepository, orderProvider)
+
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
 		_, err := orderService.GetAndSaveOrder()
 
 		if err != nil {
 			log.Fatalf("Error while receiving order: %s", err)
 		}
-
-		time.Sleep(1 * time.Second)
 	}
-
 }

@@ -2,19 +2,17 @@ package order
 
 import (
 	"TestTask/internal/app/providers"
-	"TestTask/internal/app/providers/order"
-	orderProvider "TestTask/internal/app/providers/order"
-	_ "TestTask/internal/app/repositories/order"
-	orderRepo "TestTask/internal/app/repositories/order"
+	OrderProvider "TestTask/internal/app/providers/order"
+	OrderRepository "TestTask/internal/app/repositories/order"
 	"log"
 )
 
 type Service struct {
-	repo     *orderRepo.Repository
-	provider *order.Provider
+	repo     *OrderRepository.Repository
+	provider *OrderProvider.Provider
 }
 
-func New(repository *orderRepo.Repository, provider *orderProvider.Provider) *Service {
+func New(repository *OrderRepository.Repository, provider *OrderProvider.Provider) *Service {
 	return &Service{
 		repo:     repository,
 		provider: provider,
