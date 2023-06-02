@@ -31,3 +31,13 @@ func (o Service) GetAndSaveOrder() (providers.Response, error) {
 
 	return response, err
 }
+
+func (o Service) GetOrderByIDs(IDs []int) ([]providers.Order, error) {
+	orders, err := o.repo.GetOrderByIDs(IDs)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(orders)
+	return orders, nil
+}
